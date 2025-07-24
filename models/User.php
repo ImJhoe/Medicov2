@@ -359,15 +359,15 @@ class User {
 
     // Obtener especialidades de un médico
     public function getMedicoEspecialidades($medicoId) {
-        $sql = "SELECT e.id_especialidad, e.nombre_especialidad 
-                FROM medico_especialidades me
-                INNER JOIN especialidades e ON me.id_especialidad = e.id_especialidad
-                WHERE me.id_medico = :medico_id AND me.activo = 1";
-
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute(['medico_id' => $medicoId]);
-        return $stmt->fetchAll();
-    }
+    $sql = "SELECT me.*, e.nombre_especialidad 
+            FROM medico_especialidades me
+            INNER JOIN especialidades e ON me.id_especialidad = e.id_especialidad
+            WHERE me.id_medico = :medico_id AND me.activo = 1";
+    
+    $stmt = $this->db->prepare($sql);
+    $stmt->execute(['medico_id' => $medicoId]);
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
 
     // Método existente
     private function updateLastAccess($userId) {
@@ -438,6 +438,56 @@ class User {
             'id' => $userId
         ]);
     }
+   // Agregar este método en tu models/User.php existente
+
+public function getMedicos() {
+    $sql = "SELECT u.id_usuario, u.nombre, u.apellido, u.email, u.cedula,
+                   GROUP_CONCAT(e.nombre_especialidad SEPARATOR ', ') as especialidades
+            FROM usuarios u
+            LEFT JOIN medico_especialidades me ON u.id_usuario = me.id_medico AND me.activo = 1
+            LEFT JOIN especialidades e ON me.id_especialidad = e.id_especialidad
+            WHERE u.id_rol = 3 AND u.activo = 1
+            GROUP BY u.id_usuario
+            ORDER BY u.nombre, u.apellido";
+    
+    $stmt = $this->db->prepare($sql);
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+// Agregar estos métodos a tu models/User.php existente
+
+public function getPacienteByCedula($cedula) {
+    $sql = "SELECT * FROM usuarios 
+            WHERE cedula = :cedula AND id_rol = 4 AND activo = 1";
+    $stmt = $this->db->prepare($sql);
+    $stmt->execute(['cedula' => $cedula]);
+    return $stmt->fetch(PDO::FETCH_ASSOC);
+}
+
+public function getPacientes($search = '') {
+    $sql = "SELECT id_usuario, nombre, apellido, cedula, email, telefono, fecha_nacimiento
+            FROM usuarios 
+            WHERE id_rol = 4 AND activo = 1";
+    
+    $params = [];
+    
+    if (!empty($search)) {
+        $sql .= " AND (nombre LIKE :search OR apellido LIKE :search OR cedula LIKE :search OR email LIKE :search)";
+        $params['search'] = "%{$search}%";
+    }
+    
+    $sql .= " ORDER BY nombre, apellido";
+    
+    $stmt = $this->db->prepare($sql);
+    $stmt->execute($params);
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+public function getUserByEmail($email) {
+    $sql = "SELECT * FROM usuarios WHERE email = :email AND activo = 1";
+    $stmt = $this->db->prepare($sql);
+    $stmt->execute(['email' => $email]);
+    return $stmt->fetch(PDO::FETCH_ASSOC);
+}
 }
 
 ?>

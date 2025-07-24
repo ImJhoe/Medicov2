@@ -11,13 +11,15 @@
     --text-dark: #2c2c2c;
     --shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
     --shadow-hover: 0 4px 25px rgba(0, 0, 0, 0.15);
+    --notification-red: #dc3545;
+    --notification-blue: #0d6efd;
 }
 
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
     margin: 0;
-    padding-left: 280px; /* Espacio para el sidebar */
+    padding-left: 280px;
     transition: padding-left 0.3s ease;
 }
 
@@ -45,12 +47,7 @@ body {
     width: 2px;
     background: linear-gradient(180deg, transparent 0%, #ffffff 50%, transparent 100%);
 }
-.navbar-fixed {
-    position: fixed;
-    top: 0;
-    width: 100%;
-    z-index: 1000;
-}
+
 .navbar-brand {
     transition: all 0.3s ease;
     padding: 1rem 1.5rem;
@@ -213,12 +210,112 @@ body {
     border-top: 1px solid var(--border-gray);
 }
 
+/* Estilos para la campana de notificaciones */
+.notification-section {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    margin: 0.5rem 0 1rem 0;
+    padding-top: 0.5rem;
+}
+
+.notification-wrapper {
+    position: relative;
+}
+
+.notification-trigger {
+    color: #ffffff !important;
+    font-weight: 500;
+    padding: 0.875rem 1.5rem !important;
+    transition: all 0.3s ease;
+    position: relative;
+    margin: 0.125rem 1rem;
+    border-radius: 8px;
+    display: block;
+    width: calc(100% - 2rem);
+    text-decoration: none !important;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+.notification-trigger::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.notification-trigger:hover::before {
+    opacity: 1;
+}
+
+.notification-trigger:hover {
+    color: #ffffff !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
+}
+
+.notification-content-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    position: relative;
+    z-index: 1;
+}
+
+.notification-icon {
+    font-size: 1.1rem;
+    position: relative;
+    width: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.notification-badge {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    background: var(--notification-red);
+    color: white;
+    border-radius: 50%;
+    min-width: 16px;
+    height: 16px;
+    font-size: 0.65rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    animation: pulse 2s infinite;
+    border: 2px solid var(--primary-black);
+    padding: 0 2px;
+}
+
+@keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.7); }
+    70% { box-shadow: 0 0 0 4px rgba(220, 53, 69, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(220, 53, 69, 0); }
+}
+
+.notification-text {
+    font-size: 0.95rem;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+}
+
+/* Dropdown de notificaciones mejorado - ELIMINADO */
+/* Estilos del dropdown eliminados ya que ahora es solo un enlace directo */
+
+/* User menu */
 .user-menu {
     background: rgba(255, 255, 255, 0.1) !important;
     border-radius: 8px !important;
     padding: 0.75rem 1.5rem !important;
     margin: 1rem;
-    margin-top: auto;
     width: calc(100% - 2rem);
 }
 
@@ -309,15 +406,26 @@ body {
         width: 100%;
     }
     
+    .notification-item {
+        margin: 0.25rem 0;
+        width: 100%;
+    }
+    
     .user-menu {
         margin: 0.5rem 0 0 0;
         width: 100%;
     }
     
-    .dropdown-menu {
+    .dropdown-menu,
+    .notifications-dropdown {
         position: relative;
         margin: 0.25rem 0;
         min-width: 100%;
+    }
+    
+    .notification-section {
+        margin-top: 0.5rem;
+        padding-top: 0.5rem;
     }
 }
 </style>
@@ -335,6 +443,7 @@ body {
         </button>
 
         <div class="collapse navbar-collapse d-lg-flex flex-lg-column flex-lg-grow-1" id="navbarNav">
+            <!-- Menús principales -->
             <ul class="navbar-nav flex-lg-column w-100">
                 <?php if (isset($menus) && !empty($menus)): ?>
                     <?php foreach ($menus as $menu): ?>
@@ -358,8 +467,9 @@ body {
                     <?php endforeach; ?>
                 <?php endif; ?>
             </ul>
-
-            <ul class="navbar-nav mt-auto">
+            
+            <!-- Menú de usuario -->
+            <ul class="navbar-nav">
                 <li class="nav-item dropdown dropdown-hover">
                     <a class="nav-link menu-item user-menu" href="#" role="button" data-bs-toggle="dropdown">
                         <div class="user-menu-content">
@@ -377,6 +487,21 @@ body {
                     </ul>
                 </li>
             </ul>
+            
+            <!-- Sección de notificaciones -->
+            <div class="notification-section">
+                <div class="notification-wrapper">
+                    <a href="index.php?action=notificaciones" class="notification-trigger">
+                        <div class="notification-content-wrapper">
+                            <div class="notification-icon">
+                                <i class="fas fa-bell"></i>
+                                <span class="notification-badge" id="notification-count" style="display: none;">0</span>
+                            </div>
+                            <span class="notification-text">Notificaciones</span>
+                        </div>
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
 </nav>
@@ -384,6 +509,7 @@ body {
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
+    // Manejo de dropdowns con hover
     const dropdowns = document.querySelectorAll('.dropdown-hover');
     const mediaQuery = window.matchMedia('(min-width: 992px)');
 
@@ -419,5 +545,45 @@ document.addEventListener('DOMContentLoaded', function () {
 
     handleDropdowns();
     mediaQuery.addListener(handleDropdowns);
+
+    // Inicializar notificaciones
+    inicializarNotificaciones();
 });
+
+// Sistema de notificaciones simplificado
+function inicializarNotificaciones() {
+    cargarContadorNotificaciones();
+    
+    // Actualizar cada 30 segundos
+    setInterval(() => {
+        cargarContadorNotificaciones();
+    }, 30000);
+}
+
+function cargarContadorNotificaciones() {
+    fetch('index.php?action=notificaciones/contador')
+        .then(response => {
+            if (!response.ok) throw new Error('Error en la respuesta');
+            return response.json();
+        })
+        .then(data => {
+            const countBadge = document.getElementById('notification-count');
+            if (data.success && data.count > 0) {
+                countBadge.textContent = data.count > 99 ? '99+' : data.count;
+                countBadge.style.display = 'flex';
+            } else {
+                countBadge.style.display = 'none';
+            }
+        })
+        .catch(error => {
+            console.error('Error cargando contador:', error);
+            // En caso de error, ocultar el badge
+            document.getElementById('notification-count').style.display = 'none';
+        });
+}
+
+// Función para actualizar notificaciones manualmente (opcional)
+function actualizarNotificaciones() {
+    cargarContadorNotificaciones();
+}
 </script>

@@ -227,4 +227,44 @@ Para soporte: " . SUPPORT_EMAIL . "
 Sistema 
     ";
 }
+function enviarEmailPersonalizado($email, $nombreDestinatario, $asunto, $contenidoHtml) {
+    $mail = new PHPMailer(true);
+    
+    try {
+        // Configuración del servidor
+        $mail->isSMTP();
+        $mail->Host = SMTP_HOST;
+        $mail->SMTPAuth = true;
+        $mail->Username = SMTP_USERNAME;
+        $mail->Password = SMTP_PASSWORD;
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+        $mail->Port = SMTP_PORT;
+        $mail->CharSet = 'UTF-8';
+        
+        // Remitente y destinatario
+        $mail->setFrom(SMTP_FROM_EMAIL, SMTP_FROM_NAME);
+        $mail->addAddress($email, $nombreDestinatario);
+        $mail->addReplyTo(SUPPORT_EMAIL, 'Soporte Clínica');
+        
+        // Contenido del email
+        $mail->isHTML(true);
+        $mail->Subject = $asunto;
+        $mail->Body = $contenidoHtml;
+        
+        // Versión texto plano (fallback)
+        $mail->AltBody = strip_tags(str_replace(['<br>', '<br/>', '<br />'], "\n", $contenidoHtml));
+        
+        $mail->send();
+        
+        // Log exitoso
+        error_log("Email personalizado enviado a: {$email} - Asunto: {$asunto}");
+        return true;
+        
+    } catch (Exception $e) {
+        // Log del error
+        error_log("Error enviando email personalizado a {$email}: {$mail->ErrorInfo}");
+        return false;
+    }
+}
+
 ?>

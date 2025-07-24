@@ -343,7 +343,7 @@ include 'views/includes/header.php';
     <div class="login-container">
         <!-- Header -->
         <div class="login-header">
-            <i class="fas fa-hospital-alt logo-icon"></i>
+            <i class="fa fa-user-md" aria-hidden="true" style="font-size: 100px;"></i>
             <h1 class="login-title">ACCESO</h1>
             <p class="login-subtitle">Sistema de Gestión</p>
         </div>
