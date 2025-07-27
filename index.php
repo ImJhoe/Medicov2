@@ -25,6 +25,7 @@ if (!file_exists($viewPath)) {
         $viewPath = "views/dashboard/index.php";
     }
 }
+
 // Rutas para horarios médicos
 if (strpos($action, 'config/horarios') === 0) {
     require_once 'controllers/HorarioController.php';
@@ -52,36 +53,42 @@ if (strpos($action, 'config/horarios') === 0) {
     }
     exit;
 }
-// Rutas para triaje médico
-if (strpos($action, 'consultas/triaje') === 0) {
-    require_once 'controllers/TriajeController.php';
-    $controller = new TriajeController();
-    
-    switch ($action) {
-        case 'consultas/triaje':
-            $controller->index();
-            break;
-        case 'consultas/triaje/buscar-paciente':
-            $controller->buscarPaciente();
-            break;
-        case 'consultas/triaje/crear':
-            $controller->crear();
-            break;
-        case 'consultas/triaje/ver':
-            $controller->ver();
-            break;
-        case 'consultas/triaje/historial':
-            $controller->historial();
-            break;
-        case 'consultas/triaje/nuevo-paciente':
-            $controller->nuevoPaciente();
-            break;
-        default:
-            $controller->index();
-            break;
+
+// Rutas para consultas médicas (TODAS - triaje y atender pacientes)
+if (strpos($action, 'consultas') === 0) {
+    // Rutas de triaje
+    if (strpos($action, 'consultas/triaje') === 0) {
+        require_once 'controllers/TriajeController.php';
+        $controller = new TriajeController();
+        
+        switch ($action) {
+            case 'consultas/triaje':
+                $controller->index();
+                break;
+            case 'consultas/triaje/buscar-paciente':
+                $controller->buscarPaciente();
+                break;
+            case 'consultas/triaje/crear':
+                $controller->crear();
+                break;
+            case 'consultas/triaje/ver':
+                $controller->ver();
+                break;
+            case 'consultas/triaje/historial':
+                $controller->historial();
+                break;
+            case 'consultas/triaje/nuevo-paciente':
+                $controller->nuevoPaciente();
+                break;
+            default:
+                $controller->index();
+                break;
+        }
+        exit;
     }
-    exit;
-}
+    
+ 
+
 // Rutas para gestión de citas médicas
 if (strpos($action, 'citas') === 0) {
     require_once 'controllers/CitaController.php';
@@ -112,19 +119,18 @@ if (strpos($action, 'citas') === 0) {
         case 'citas/get-horarios':
             $controller->getHorariosMedico();
             break;
-          case 'citas/eliminar':
+        case 'citas/eliminar':
             $controller->eliminar();
-            break;  
+            break;
+        case 'citas/crear-paciente-rapido':
+            $controller->crearPacienteRapido();
+            break;
         default:
             $controller->index();
-            break;
-            case 'citas/crear-paciente-rapido':
-            $controller->crearPacienteRapido();
             break;
     }
     exit;
 }
-// AGREGAR estas rutas en index.php
 
 // Rutas para notificaciones
 if (strpos($action, 'notificaciones') === 0) {
@@ -153,7 +159,7 @@ if (strpos($action, 'notificaciones') === 0) {
     }
     exit;
 }
-
+}
 // Incluir la vista (que manejará toda su lógica)
 include $viewPath;
 ?>

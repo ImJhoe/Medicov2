@@ -358,5 +358,6 @@ public function getConsultaCita($citaId) {
         throw $e;
     }
 }
+
 }
 ?>
