@@ -20,7 +20,6 @@ class CitaController {
         $this->userModel = new User();
         $this->especialidadModel = new Especialidad();
         $this->sucursalModel = new Sucursal();
-        $this->horarioModel = new HorarioMedico();
         $this->notificacionModel = new Notificacion();
     }
     

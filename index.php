@@ -26,34 +26,6 @@ if (!file_exists($viewPath)) {
     }
 }
 
-// Rutas para horarios médicos
-if (strpos($action, 'config/horarios') === 0) {
-    require_once 'controllers/HorarioController.php';
-    $controller = new HorarioController();
-    
-    switch ($action) {
-        case 'config/horarios':
-            $controller->index();
-            break;
-        case 'config/horarios/create':
-            $controller->create();
-            break;
-        case 'config/horarios/edit':
-            $controller->edit();
-            break;
-        case 'config/horarios/delete':
-            $controller->delete();
-            break;
-        case 'config/horarios/get-horarios-medico':
-            $controller->getHorariosMedico();
-            break;
-        default:
-            $controller->index();
-            break;
-    }
-    exit;
-}
-
 // Rutas para consultas médicas (TODAS - triaje y atender pacientes)
 if (strpos($action, 'consultas') === 0) {
     // Rutas de triaje

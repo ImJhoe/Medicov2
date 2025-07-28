@@ -359,5 +359,21 @@ public function getConsultaCita($citaId) {
     }
 }
 
+// Agregar este método al final de la clase Cita en models/Cita.php
+
+public function actualizarEstadoCita($citaId, $estado, $usuarioId) {
+    $sql = "UPDATE citas SET 
+                estado_cita = :estado,
+                id_usuario_registro = :usuario_id,
+                fecha_modificacion = CURRENT_TIMESTAMP
+            WHERE id_cita = :cita_id";
+    
+    $stmt = $this->db->prepare($sql);
+    return $stmt->execute([
+        'cita_id' => $citaId,
+        'estado' => $estado,
+        'usuario_id' => $usuarioId
+    ]);
+}
 }
 ?>
