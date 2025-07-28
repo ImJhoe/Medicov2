@@ -3,8 +3,8 @@
 require_once 'models/Cita.php';
 require_once 'models/User.php';
 require_once 'models/Especialidad.php';
+// require_once 'models/Horario.php';
 require_once 'models/Sucursal.php';
-require_once 'models/HorarioMedico.php';
 require_once 'models/Notificacion.php';
 
 class CitaController {
@@ -12,7 +12,7 @@ class CitaController {
     private $userModel;
     private $especialidadModel;
     private $sucursalModel;
-    private $horarioModel;
+    // private $horarioModel;
     private $notificacionModel;
     
     public function __construct() {
@@ -412,6 +412,36 @@ public function crearPacienteRapido() {
         }
     }
     exit;
+}
+public function calendario() {
+    // Vista del calendario dinámico
+    if (!isset($_SESSION['user_id'])) {
+        header('Location: index.php?action=login');
+        exit;
+    }
+    
+    try {
+        // Obtener datos necesarios para el calendario
+        $medicos = $this->userModel->getMedicos();
+        $especialidades = $this->especialidadModel->getAllEspecialidades();
+        $sucursales = $this->sucursalModel->getAllSucursales();
+        
+        // Debug - Verificar que se están obteniendo los datos
+        error_log('Médicos: ' . print_r($medicos, true));
+        error_log('Especialidades: ' . print_r($especialidades, true));
+        error_log('Sucursales: ' . print_r($sucursales, true));
+        
+        // Obtener citas del mes actual
+        $fechaActual = date('Y-m-01');
+        $fechaFinal = date('Y-m-t');
+        $citas = $this->citaModel->getCitasPorRango($fechaActual, $fechaFinal);
+        
+        include 'views/citas/calendario.php';
+        
+    } catch (Exception $e) {
+        error_log('Error en calendario: ' . $e->getMessage());
+        echo "Error: " . $e->getMessage();
+    }
 }
 }
 ?>

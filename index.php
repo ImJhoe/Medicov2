@@ -58,8 +58,7 @@ if (strpos($action, 'consultas') === 0) {
         }
         exit;
     }
-    
- 
+}
 
 // Rutas para gestión de citas médicas
 if (strpos($action, 'citas') === 0) {
@@ -97,6 +96,9 @@ if (strpos($action, 'citas') === 0) {
         case 'citas/crear-paciente-rapido':
             $controller->crearPacienteRapido();
             break;
+        case 'citas/calendario':
+            $controller->calendario();
+            break;           
         default:
             $controller->index();
             break;
@@ -131,7 +133,35 @@ if (strpos($action, 'notificaciones') === 0) {
     }
     exit;
 }
+
+// Rutas para gestión de doctores
+if (strpos($action, 'doctores') === 0) {
+    require_once 'controllers/DoctorController.php';
+    $controller = new DoctorController();
+    
+    switch ($action) {
+        case 'doctores':
+            $controller->index();
+            break;
+        case 'doctores/crear':
+            $controller->crear();
+            break;
+        case 'doctores/horarios':
+            $controller->horarios();
+            break;
+        case 'doctores/guardar-horario':
+            $controller->guardarHorario();
+            break;
+        case 'doctores/eliminar-horario':
+            $controller->eliminarHorario();
+            break;
+        default:
+            $controller->index();
+            break;
+    }
+    exit;
 }
+
 // Incluir la vista (que manejará toda su lógica)
 include $viewPath;
 ?>

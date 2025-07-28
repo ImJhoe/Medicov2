@@ -375,5 +375,29 @@ public function actualizarEstadoCita($citaId, $estado, $usuarioId) {
         'usuario_id' => $usuarioId
     ]);
 }
+public function getCitasPorRango($fechaInicio, $fechaFinal) {
+    $sql = "SELECT c.*, 
+                   CONCAT(p.nombre, ' ', p.apellido) as nombre_paciente,
+                   p.cedula,
+                   CONCAT(m.nombre, ' ', m.apellido) as nombre_medico,
+                   e.nombre_especialidad,
+                   s.nombre_sucursal
+            FROM citas c
+            INNER JOIN usuarios p ON c.id_paciente = p.id_usuario
+            LEFT JOIN usuarios m ON c.id_medico = m.id_usuario
+            LEFT JOIN especialidades e ON c.id_especialidad = e.id_especialidad
+            LEFT JOIN sucursales s ON c.id_sucursal = s.id_sucursal
+            WHERE c.fecha_cita BETWEEN :fecha_inicio AND :fecha_final
+            AND c.estado_cita NOT IN ('cancelada', 'no_asistio')
+            ORDER BY c.fecha_cita, c.hora_cita";
+    
+    $stmt = $this->db->prepare($sql);
+    $stmt->execute([
+        'fecha_inicio' => $fechaInicio,
+        'fecha_final' => $fechaFinal
+    ]);
+    
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
 }
 ?>
