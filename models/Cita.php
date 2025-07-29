@@ -323,6 +323,7 @@ public function getConsultaCita($citaId) {
     $stmt->execute(['cita_id' => $citaId]);
     return $stmt->fetch(PDO::FETCH_ASSOC);
 }
+
     public function eliminarCita($citaId, $usuarioRegistro) {
     $this->db->beginTransaction();
     
@@ -398,6 +399,60 @@ public function getCitasPorRango($fechaInicio, $fechaFinal) {
     ]);
     
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+// Agregar al final de la clase Cita
+
+public function getCitasPendientesMedico($medicoId) {
+    $sql = "SELECT 
+                c.*, 
+                CONCAT(p.nombre, ' ', p.apellido) as nombre_paciente,
+                p.cedula,
+                e.nombre_especialidad,
+                s.nombre_sucursal
+            FROM citas c
+            INNER JOIN usuarios p ON c.id_paciente = p.id_usuario
+            LEFT JOIN especialidades e ON c.id_especialidad = e.id_especialidad
+            LEFT JOIN sucursales s ON c.id_sucursal = s.id_sucursal
+            WHERE c.id_medico = ? 
+                AND c.estado_cita IN ('confirmada', 'agendada')
+                AND c.fecha_cita >= CURDATE()
+            ORDER BY c.fecha_cita ASC, c.hora_cita ASC";
+            
+    $stmt = $this->db->prepare($sql);
+    $stmt->execute([$medicoId]);
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+public function cambiarEstadoCita($citaId, $nuevoEstado, $usuarioId) {
+    $sql = "UPDATE citas SET 
+                estado_cita = ?,
+                fecha_modificacion = NOW()
+            WHERE id_cita = ?";
+            
+    $stmt = $this->db->prepare($sql);
+    $resultado = $stmt->execute([$nuevoEstado, $citaId]);
+    
+    if ($resultado) {
+        // Registrar en logs directamente en la tabla logs_sistema
+        $sqlLog = "INSERT INTO logs_sistema (
+                    id_usuario,
+                    accion,
+                    tabla_afectada,
+                    id_registro_afectado,
+                    datos_nuevos
+                ) VALUES (?, ?, ?, ?, ?)";
+                
+        $stmtLog = $this->db->prepare($sqlLog);
+        $stmtLog->execute([
+            $usuarioId,
+            'CAMBIAR_ESTADO_CITA',
+            'citas',
+            $citaId,
+            json_encode(['nuevo_estado' => $nuevoEstado])
+        ]);
+    }
+    
+    return $resultado;
 }
 }
 ?>

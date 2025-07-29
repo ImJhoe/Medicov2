@@ -434,7 +434,7 @@ body {
     <div class="d-flex flex-column w-100 h-100">
         <a class="navbar-brand" href="index.php?action=dashboard">
             <div class="brand-content">
-                <span class="brand-text">ADMIN</span>
+                <span class="brand-text">Bienvenido</span>
             </div>
         </a>
 

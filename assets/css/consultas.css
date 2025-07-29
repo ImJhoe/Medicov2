@@ -1,0 +1,86 @@
+/* Timeline styles for historial clínico */
+.timeline {
+    position: relative;
+    padding-left: 2rem;
+}
+
+.timeline-item {
+    position: relative;
+    padding-bottom: 2rem;
+    border-left: 2px solid #dee2e6;
+}
+
+.timeline-item:last-child {
+    border-left: none;
+}
+
+.timeline-marker {
+    position: absolute;
+    left: -8px;
+    top: 0;
+    width: 16px;
+    height: 16px;
+    background: #007bff;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    box-shadow: 0 0 0 2px #007bff;
+}
+
+.card-sm .card-header {
+    padding: 0.5rem;
+    font-size: 0.875rem;
+}
+
+.card-sm .card-body {
+    padding: 0.5rem;
+}
+
+.btn-group .btn {
+    margin-right: 0.25rem;
+}
+
+.alert-sm {
+    padding: 0.5rem 0.75rem;
+    margin-bottom: 0.5rem;
+}
+
+/* Mejoras adicionales para consultas médicas */
+.consulta-form .form-label {
+    font-weight: 600;
+    color: #495057;
+}
+
+.signos-vitales-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 0.5rem;
+}
+
+.historial-item {
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    overflow: hidden;
+}
+
+.historial-item:hover {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transition: box-shadow 0.3s ease;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .timeline {
+        padding-left: 1rem;
+    }
+    
+    .timeline-marker {
+        left: -6px;
+        width: 12px;
+        height: 12px;
+    }
+    
+    .signos-vitales-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
